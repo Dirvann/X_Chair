@@ -402,20 +402,21 @@ public class MainActivity extends AppCompatActivity {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
         final Switch autoSwitch = (Switch) findViewById(R.id.switch1);
 
-            autoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        for (int i = 0; i < controlRepeat; i++) {
-                            sender.send(commands.CHG_STATION, false);
-                        }
-                    } else {
-                        for (int i = 0; i < controlRepeat; i++) {
-                            sender.send(commands.MANUAL, false);
-                        }
+        autoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                System.out.println(isChecked);
+                if (isChecked) {
+                    for(int i=0; i < controlRepeat; i++) {
+                        sender.send(commands.CHG_STATION, false);
+                    }
+                } else {
+                    for(int i=0; i < controlRepeat; i++) {
+                        sender.send(commands.MANUAL, false);
                     }
                 }
-            });
+            }
+        });
 
     }
 

@@ -29,7 +29,9 @@ class UDPSender {
         //repetition module on new thread
         final Thread sendingThread = new Thread() {
             public void run() {
-
+                if(!repeat){
+                    running = true;
+                }
                 try {
                     while (running) {
                         if(!repeat){
