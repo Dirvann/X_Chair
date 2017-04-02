@@ -7,4 +7,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="rainbow">Rainbow</string>
+    <string name="speed_down">Speed Down</string>
+    <string name="speed_up">Speed Up</string>
+    <string name="vdriver_controller">VDriver Controller</string>
+    <string name="auto">AUTO</string>
+    <string name="lights">LIGHTS</string>
+    <string name="off">OFF</string>
+    <string name="on">ON</string>
+    <string name="auto_driving">Auto Driving</string>
+    <string name="x_chair_310">X-Chair 310</string>
 </resources>
