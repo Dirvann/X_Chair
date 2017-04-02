@@ -22,7 +22,7 @@ class UDPSender {
     boolean running;
     int sendingInterval;
     private int data;
-    void send(final int dat) {
+    void send(final int dat,final boolean repeat) {
         //inserting data in class
         this.data = dat;
 
@@ -32,6 +32,9 @@ class UDPSender {
 
                 try {
                     while (running) {
+                        if(!repeat){
+                            running = false;
+                        }
                         //Strictmode to delete Network error
                         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                         StrictMode.setThreadPolicy(policy);

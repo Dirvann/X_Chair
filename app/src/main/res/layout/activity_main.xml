@@ -207,7 +207,8 @@
             android:switchMinWidth="70dp"
             android:text="@string/auto_driving"
             android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:showText="true" />
 
     </RelativeLayout>
 
