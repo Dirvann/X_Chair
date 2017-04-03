@@ -1,15 +1,11 @@
-package testproject.test;
+package Team_310.x_chair;
 
 import android.os.AsyncTask;
-import android.os.NetworkOnMainThreadException;
-import android.provider.ContactsContract;
 
 import android.os.StrictMode;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.io.*;
-import java.util.Date;
 
 
 /**

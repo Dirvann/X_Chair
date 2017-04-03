@@ -1,6 +1,5 @@
-package testproject.test;
+package Team_310.x_chair;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,11 +10,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.Toast;
-
-import static android.widget.Toast.LENGTH_SHORT;
-
-
 
 
 public class MainActivity extends AppCompatActivity {

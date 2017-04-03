@@ -1,4 +1,4 @@
-package testproject.test;
+package Team_310.x_chair;
 
 /**
  * Created by Dirk Vanbeveren on 2/04/2017.
