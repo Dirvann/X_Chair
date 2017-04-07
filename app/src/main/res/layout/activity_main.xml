@@ -8,8 +8,8 @@
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="395dp"
+        android:layout_height="643dp"
         android:layout_margin="0dp"
         android:background="@drawable/background"
         android:padding="0dp"
@@ -200,15 +200,39 @@
             android:id="@+id/switch1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tableLayout2"
-            android:layout_marginTop="24dp"
-            android:layout_toLeftOf="@+id/speedup"
-            android:layout_toStartOf="@+id/speedup"
+            android:layout_marginTop="9dp"
+            android:showText="true"
             android:switchMinWidth="70dp"
             android:text="@string/auto_driving"
             android:textColor="@android:color/white"
             android:textSize="20sp"
-            android:showText="true" />
+            android:layout_below="@+id/tableLayout2"
+            android:layout_alignStart="@+id/speeddown" />
+
+        <TextView
+            android:id="@+id/ViewSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="1dp"
+            android:text="@string/_0_0"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/switch1"
+            android:layout_toStartOf="@+id/Up" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:layout_alignBaseline="@+id/ViewSpeed"
+            android:layout_alignBottom="@+id/ViewSpeed"
+            android:layout_alignStart="@+id/Left"
+            android:layout_marginStart="8dp" />
 
     </RelativeLayout>
 

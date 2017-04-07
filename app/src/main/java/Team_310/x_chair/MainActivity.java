@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,15 +29,18 @@ public class MainActivity extends AppCompatActivity {
 ///////////////packet sending configuration////////////////////////////
 //////////////////////////////////////////////////////////////////////
         final UDPSender sender = new UDPSender();
-        sender.host = "www.google.com";
-        sender.port = 80;
-        sender.sendingInterval = 90;
+        sender.host = "www.ebay.com";
+        sender.port = 9310;
+        sender.sendingInterval = 90; //interval at which moving commands will be sent repeatedly
         final int controlRepeat = 4; //extra sending to be sure the message arrives
+
+        final UDPReceiver receiver = new UDPReceiver();
+        receiver.run(9310);          //Opening UDP listening port
 
 /////////////////////////////////////////////////////////////////////
 ////////////////////Color configuration//////////////////////////////
 /////////////////////////////////////////////////////////////////////
-        final String pressColor = "#F7E0FA";
+        final String pressColor = "#F7E0FA"; //color of background of
         final String releaseColor = "#ECBE06";
 
 /////////////////////////////////////////////////////////////////////
@@ -411,7 +415,38 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////VALUE DATA INPUTS(ex:speed)/////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////-------------------------------View Speed-------------------------------------------////////
+        //Transcoder trans = new Transcoder();
+        //trans.transcode("123456");
+        final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
+        speedDisplay.setText("123");
+
+        final Thread t = new Thread(){
+            public void run(){
+                try {
+                    for (int i = 0; i < 1000; i++) {
+                        speedDisplay.setText(String.valueOf(i));
+                        Thread.sleep(100);
+
+                    }
+                }catch(InterruptedException e){
+                    System.err.println(e);
+                }
+
+            }
+        };
+        t.start();
+
+
 
     }
+    /*public void displaySpeed(String data) {
+        final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
+        speedDisplay.setText("123454");
+    }*/
 
 }
