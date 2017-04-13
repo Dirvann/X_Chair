@@ -8,7 +8,7 @@ import android.widget.TextView;
 class Transcoder {
     void transcode(String message){
         //This class links all the messages to commands
-        //TODO: Send the message to the display
+        //TODO: add commands to the messages
 
         //for speed
         //MainActivity main = new MainActivity();

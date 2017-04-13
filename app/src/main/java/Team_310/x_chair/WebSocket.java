@@ -40,7 +40,6 @@ class WebSocket {
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO: add all commands
                         Transcoder transcoder = new Transcoder();
                         transcoder.transcode(s);
                     }
