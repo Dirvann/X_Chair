@@ -34,13 +34,21 @@ public class MainActivity extends AppCompatActivity {
         sender.sendingInterval = 90; //interval at which moving commands will be sent repeatedly
         final int controlRepeat = 4; //extra sending to be sure the message arrives
 
-        final UDPReceiver receiver = new UDPReceiver();
-        receiver.run(9310);          //Opening UDP listening port
+        //final UDPReceiver receiver = new UDPReceiver();
+        //receiver.run(9310);          //Opening UDP listening port
+
+        //Initialize WebSocket
+        final WebSocket webSocket = new WebSocket();
+        webSocket.host = "google.com";
+        webSocket.port = 9310;
+        webSocket.connectWebSocket();
+
+        //TODO: add webSocket.sendMessage(message) to all commands
 
 /////////////////////////////////////////////////////////////////////
 ////////////////////Color configuration//////////////////////////////
 /////////////////////////////////////////////////////////////////////
-        final String pressColor = "#F7E0FA"; //color of background of
+        final String pressColor = "#F7E0FA"; //color of background of buttons
         final String releaseColor = "#ECBE06";
 
 /////////////////////////////////////////////////////////////////////
@@ -422,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
 ///////-------------------------------View Speed-------------------------------------------////////
         //Transcoder trans = new Transcoder();
         //trans.transcode("123456");
-        final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
+        /*final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
         speedDisplay.setText("123");
 
         final Thread t = new Thread(){
@@ -439,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        t.start();
+        t.start();*/
 
 
 

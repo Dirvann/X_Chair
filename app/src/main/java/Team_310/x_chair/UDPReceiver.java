@@ -8,9 +8,9 @@ import java.net.InetAddress;
  * Created by Dirk Vanbeveren on 6/04/2017.
  */
 
-class UDPReceiver {
+/*class UDPReceiver {
 
-        public void run(int port) {
+        /*public void run(int port) {
             /*try {
                 DatagramSocket serverSocket = new DatagramSocket(port);
                 byte[] receiveData = new byte[8];
@@ -28,6 +28,6 @@ class UDPReceiver {
                 }
             }catch (IOException e) {
                 System.out.println(e);
-            }*/
-        }
-}
+            }
+}*/
+
