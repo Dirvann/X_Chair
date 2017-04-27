@@ -1,11 +1,9 @@
-package Team_310.x_chair;
+package team_310.x_chair;
 
 import android.app.Activity;
-import android.os.Build;
-import android.util.Log;
-import android.widget.TextView;
 
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
@@ -17,18 +15,23 @@ import java.net.URISyntaxException;
 
 class WebSocket {
     private Activity act;
+    int sendingInterval;
     String host;
+    boolean running;
     int port;
     private WebSocketClient webSocketClient;
     void connectWebSocket() {
+        System.out.println("connecting websocket..");
         URI uri;
         try {
-           uri = new URI("ws://"+ host+ ":"+ String.valueOf(port));
+           //uri = new URI("http://"+ host+ ":"+ String.valueOf(port));
+            uri = new URI("ws://3.1.0.1:81/");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
         }
-        webSocketClient =new WebSocketClient(uri) {
+        System.out.println("Uri confirmed..");
+        webSocketClient =new WebSocketClient(uri, new Draft_17()) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 System.out.println("Websocket Opened");
@@ -58,8 +61,10 @@ class WebSocket {
         };
         webSocketClient.connect();
     }
-    void sendMessage(String message) {
-        webSocketClient.send(message);
+    void sendMessage(String message, boolean repeat) {
+        this.webSocketClient.send(message);
     }
 
+    public void setWebSocketClient(WebSocketClient webSocketClient) {
+    }
 }

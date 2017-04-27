@@ -1,8 +1,4 @@
-package Team_310.x_chair;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+package team_310.x_chair;
 
 /**
  * Created by Dirk Vanbeveren on 6/04/2017.

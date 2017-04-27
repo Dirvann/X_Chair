@@ -1,4 +1,4 @@
-package Team_310.x_chair;
+package team_310.x_chair;
 
 /**
  * Created by Dirk Vanbeveren on 2/04/2017.
@@ -36,9 +36,9 @@ class commands {
     static final int CHG_STATION = 0x4E;
     static final int MANUAL = 0x4D;
     ///////LIGHTS///////////////
-    static final int LIGHTS_ON = 0x63;//TODO: find another code
+    static final int LIGHTS_ON = 0x63;
     static final int LIGHTS_OFF = 0x0D;
-    static final int LIGHTS_AUTO = 0x63;
+    static final int LIGHTS_AUTO = 0x69;
 
     static final int LIGHTS_RED = 0x76;
     static final int LIGHTS_GREEN = 0x72;

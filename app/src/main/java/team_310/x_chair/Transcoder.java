@@ -1,5 +1,4 @@
-package Team_310.x_chair;
-import android.widget.TextView;
+package team_310.x_chair;
 
 /**
  * Created by Dirk Vanbeveren on 6/04/2017.
@@ -11,7 +10,7 @@ class Transcoder {
         //TODO: add commands to the messages
 
         //for speed
-        //MainActivity main = new MainActivity();
+        //mainactivity main = new mainactivity();
         //main.displaySpeed(message);
 
         }

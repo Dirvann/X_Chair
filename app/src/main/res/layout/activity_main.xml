@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="Team_310.x_chair.MainActivity">
+    android:background="@android:color/black"
+    tools:context="team_310.x_chair.mainactivity">
 
 
     <RelativeLayout
-        android:layout_width="395dp"
-        android:layout_height="643dp"
+        android:layout_width="345dp"
+        android:layout_height="541dp"
         android:layout_margin="0dp"
         android:background="@drawable/background"
         android:padding="0dp"
@@ -20,8 +21,8 @@
         android:paddingStart="0dp"
         android:paddingTop="0dp"
         android:visibility="visible"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="13dp">
 
         <TextView
             android:id="@+id/textView"
@@ -66,19 +67,19 @@
 
                 <Button
                     android:id="@+id/lights_on"
-                    android:layout_width="match_parent"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:text="@string/on" />
 
                 <Button
                     android:id="@+id/lights_off"
-                    android:layout_width="match_parent"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:text="@string/off" />
 
                 <Button
                     android:id="@+id/lights_auto"
-                    android:layout_width="match_parent"
+                    android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="@string/auto" />
             </TableRow>
@@ -92,28 +93,28 @@
 
                 <Button
                     android:id="@+id/red"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/holo_red_light"
                     tools:ignore="ButtonStyle,UnusedAttribute" />
 
                 <Button
                     android:id="@+id/green"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/holo_green_light"
                     tools:ignore="ButtonStyle,UnusedAttribute" />
 
                 <Button
                     android:id="@+id/yellow"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/holo_orange_light"
                     tools:ignore="ButtonStyle,UnusedAttribute" />
 
                 <Button
                     android:id="@+id/blue"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/holo_blue_light"
                     tools:ignore="ButtonStyle,UnusedAttribute" />
@@ -130,19 +131,18 @@
 
         <Button
             android:id="@+id/Up"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_below="@+id/tableLayout2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/ViewSpeed"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="89dp"
             android:text="Forward"
             android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/Left"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_below="@+id/Up"
             android:layout_toLeftOf="@+id/Up"
             android:text="Left"
@@ -151,8 +151,8 @@
 
         <Button
             android:id="@+id/Down"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_below="@+id/Up"
             android:layout_toEndOf="@+id/Left"
             android:layout_toRightOf="@+id/Left"
@@ -162,8 +162,8 @@
 
         <Button
             android:id="@+id/Right"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_below="@+id/Up"
             android:layout_toEndOf="@+id/Down"
             android:layout_toRightOf="@+id/Down"
@@ -175,10 +175,9 @@
             android:id="@+id/speedup"
             android:layout_width="170dp"
             android:layout_height="80dp"
-            android:layout_alignBottom="@+id/speeddown"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="13dp"
+            android:layout_alignEnd="@+id/Right"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="11dp"
             android:layout_marginRight="13dp"
             android:text="@string/speed_up"
             android:textSize="20sp" />
@@ -187,12 +186,10 @@
             android:id="@+id/speeddown"
             android:layout_width="170dp"
             android:layout_height="80dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="20dp"
+            android:layout_below="@+id/Left"
             android:layout_marginLeft="18dp"
-            android:layout_marginStart="17dp"
+            android:layout_marginTop="18dp"
+            android:layout_toStartOf="@+id/speedup"
             android:text="@string/speed_down"
             android:textSize="20sp" />
 
@@ -200,39 +197,39 @@
             android:id="@+id/switch1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/speeddown"
+            android:layout_below="@+id/tableLayout2"
             android:layout_marginTop="9dp"
             android:showText="true"
             android:switchMinWidth="70dp"
             android:text="@string/auto_driving"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:layout_below="@+id/tableLayout2"
-            android:layout_alignStart="@+id/speeddown" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/ViewSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/switch1"
+            android:layout_marginTop="10dp"
+            android:layout_toStartOf="@+id/Up"
             android:elevation="1dp"
             android:text="@string/_0_0"
             android:textColor="@android:color/white"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/switch1"
-            android:layout_toStartOf="@+id/Up" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/speed"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
             android:layout_alignBaseline="@+id/ViewSpeed"
             android:layout_alignBottom="@+id/ViewSpeed"
             android:layout_alignStart="@+id/Left"
-            android:layout_marginStart="8dp" />
+            android:layout_marginStart="8dp"
+            android:text="@string/speed"
+            android:textColor="@android:color/white"
+            android:textSize="24sp" />
 
     </RelativeLayout>
 
@@ -244,7 +241,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        <!-tools:context="testproject.test.MainActivity" ->
+        <!-tools:context="testproject.test.mainactivity" ->
         >
 
     </android.support.constraint.ConstraintLayout> -->

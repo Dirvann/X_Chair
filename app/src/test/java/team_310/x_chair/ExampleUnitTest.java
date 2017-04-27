@@ -1,4 +1,4 @@
-package Team_310.x_chair;
+package team_310.x_chair;
 
 import org.junit.Test;
 

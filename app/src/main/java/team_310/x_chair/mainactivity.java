@@ -1,4 +1,4 @@
-package Team_310.x_chair;
+package team_310.x_chair;
 
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -10,13 +10,22 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
+////////////WEBSOCKET//////////////
+import android.util.Log;
+
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.handshake.ServerHandshake;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+/////////////////////////////////////
 
 
-public class MainActivity extends AppCompatActivity {
+public class mainactivity extends AppCompatActivity {
     //checks if the app is sending motion messages (button pressed)
     String sendingMotion = "0";
-
+    private WebSocketClient mWebSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 ///////////////packet sending configuration////////////////////////////
 //////////////////////////////////////////////////////////////////////
         final UDPSender sender = new UDPSender();
-        sender.host = "www.ebay.com";
+        sender.host = "3.1.0.1";
         sender.port = 9310;
         sender.sendingInterval = 90; //interval at which moving commands will be sent repeatedly
         final int controlRepeat = 4; //extra sending to be sure the message arrives
@@ -38,12 +47,16 @@ public class MainActivity extends AppCompatActivity {
         //receiver.run(9310);          //Opening UDP listening port
 
         //Initialize WebSocket
-        final WebSocket webSocket = new WebSocket();
-        webSocket.host = "google.com";
+        final WebSocket webSocket = new WebSocket();   //Creating a new webSocket
+        webSocket.host = "3.1.0.1";    //Host to connect to
         webSocket.port = 9310;
-        webSocket.connectWebSocket();
+        webSocket.sendingInterval = 90; //Interval at which the socket is going to resend
+        webSocket.connectWebSocket();   //connecting the websocket to arduino
 
         //TODO: add webSocket.sendMessage(message) to all commands
+/////////////////////////////EXTRA WEBSOCKET////////////////////////////////////
+
+        connectWebSocket();
 
 /////////////////////////////////////////////////////////////////////
 ////////////////////Color configuration//////////////////////////////
@@ -70,11 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "forward";
-                    //System.out.println("Button down");
+                    /*//System.out.println("Button down");
                     sender.running = true;
                     UpButton.setTextColor(Color.BLACK);
                     UpButton.setBackgroundColor(Color.parseColor(pressColor));
                     sender.send(commands.FORWARD, true);
+*/                  webSocket.connectWebSocket();
+                    //sendMessage("Forward");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("forward")) {
@@ -83,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
                     sender.running = false;
                     UpButton.setTextColor(Color.BLACK);
                     UpButton.setBackgroundColor(Color.parseColor(releaseColor));
+
+                    webSocket.running = false;
                     return true;
                 }
 
@@ -105,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
                     DownButton.setTextColor(Color.BLACK);
                     DownButton.setBackgroundColor(Color.parseColor(pressColor));
                     DownButton.setShadowLayer(20, 20, 20, Color.BLACK);
+
+                    webSocket.running = true;
+                    webSocket.sendMessage(String.valueOf(commands.BACKWARD), true);
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("down")) {
@@ -133,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
                     sender.send(commands.LEFT, true);
                     LeftButton.setTextColor(Color.BLACK);
                     LeftButton.setBackgroundColor(Color.parseColor(pressColor));
+
+                    /*webSocket.running = true;
+                    webSocket.sendMessage(String.valueOf(commands.LEFT), true);*/
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("left")) {
@@ -160,6 +183,9 @@ public class MainActivity extends AppCompatActivity {
                     sender.send(commands.RIGHT, true);
                     RightButton.setTextColor(Color.BLACK);
                     RightButton.setBackgroundColor(Color.parseColor(pressColor));
+
+                    //webSocket.running = true;
+                    //webSocket.sendMessage(String.valueOf(commands.RIGHT), true);
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("right")) {
@@ -186,6 +212,9 @@ public class MainActivity extends AppCompatActivity {
                     sender.send(commands.SPEEDUP, false);
                     SuButton.setTextColor(Color.BLACK);
                     SuButton.setBackgroundColor(Color.parseColor(pressColor));
+
+                    /*webSocket.running = true;
+                    webSocket.sendMessage(String.valueOf(commands.BACKWARD), true);*/
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("su")) {
@@ -349,6 +378,8 @@ public class MainActivity extends AppCompatActivity {
                     sendingMotion = "on";
                     sender.running = true;
                     sender.send(commands.LIGHTS_ON, false); // sending lights on data to address defined at beginning
+
+                    //sendMessage("0x61");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("on")) {
@@ -391,9 +422,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "lights_auto";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_AUTO, false); // sending lights auto to address defined at beginning
+                    /*sender.running = true;
+                    sender.send(commands.LIGHTS_AUTO, false); // sending lights auto to address defined at beginning*/
+                    connectWebSocket();
                     return true;
+
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("lights_auto")) {
                     sendingMotion = "0";
@@ -456,5 +489,50 @@ public class MainActivity extends AppCompatActivity {
         final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
         speedDisplay.setText("123454");
     }*/
+    private void connectWebSocket() {
+        URI uri;
+        try {
+            uri = new URI("ws://3.1.0.1:81/");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return;
+        }
+        System.out.println("going to connect to: "+uri);
 
+        mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
+            @Override
+            public void onOpen(ServerHandshake serverHandshake) {
+                Log.i("Websocket", "Opened");
+                //mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+                mWebSocketClient.send("request");
+            }
+
+            @Override
+            public void onMessage(String s) {
+                final String message = s;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Received message: "+ message);
+                    }
+                });
+            }
+
+            @Override
+            public void onClose(int i, String s, boolean b) {
+                Log.i("Websocket", "Closed " + s);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.i("Websocket", "Error " + e.getMessage());
+            }
+        };
+        mWebSocketClient.connect();
+    }
+
+    public void sendMessage(String message) {
+        System.out.println("Sending message: "+ message);
+        mWebSocketClient.send(message);
+    }
 }
