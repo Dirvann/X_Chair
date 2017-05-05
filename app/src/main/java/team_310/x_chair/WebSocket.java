@@ -1,6 +1,7 @@
 package team_310.x_chair;
 
 import android.app.Activity;
+import android.util.Log;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
@@ -8,6 +9,9 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+////////////WEBSOCKET//////////////
+/////////////////////////////////////
 
 /**
  * Created by Dirk Vanbeveren on 12/04/2017.
@@ -19,52 +23,66 @@ class WebSocket {
     String host;
     boolean running;
     int port;
-    private WebSocketClient webSocketClient;
+    private WebSocketClient mWebSocketClient;
+    boolean connected;
     void connectWebSocket() {
-        System.out.println("connecting websocket..");
+        Wifi.connect();
         URI uri;
         try {
-           //uri = new URI("http://"+ host+ ":"+ String.valueOf(port));
             uri = new URI("ws://3.1.0.1:81/");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
         }
-        System.out.println("Uri confirmed..");
-        webSocketClient =new WebSocketClient(uri, new Draft_17()) {
+        System.out.println("going to connect to: "+uri);
+
+        mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                System.out.println("Websocket Opened");
-                webSocketClient.send("connected"); //or any check packet
+                Log.i("Websocket", "Opened");
+                //mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+                //mWebSocketClient.send("request");
+                connected = true;
+                Notification.toast("Connected");
             }
 
             @Override
-            public void onMessage(final String s) {
-                act.runOnUiThread(new Runnable() {
+            public void onMessage(String s) {
+                final String message = s;
+                /*act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Transcoder transcoder = new Transcoder();
-                        transcoder.transcode(s);
-                    }
-                });
+                        System.out.println("Received message: "+ message);
+
+
+                });*/
             }
 
             @Override
             public void onClose(int i, String s, boolean b) {
-                System.out.println("Websocket Closed " + s);
+                Log.i("Websocket", "Closed " + s);
+                connected = false;
+                Notification.toast("connection closed");
             }
 
             @Override
             public void onError(Exception e) {
-                System.out.println("Websocket Error: " + e.getMessage());
+                Log.i("Websocket", "Error " + e.getMessage());
             }
         };
-        webSocketClient.connect();
-    }
-    void sendMessage(String message, boolean repeat) {
-        this.webSocketClient.send(message);
+        Notification.toast("connecting to websocket");
+        mWebSocketClient.connect();
+        if(!connected) {
+            Notification.toast("unable to connect");
+        }
     }
 
-    public void setWebSocketClient(WebSocketClient webSocketClient) {
+    void sendMessage(String message) {
+        if(connected) {
+            System.out.println("Sending message: " + message);
+            mWebSocketClient.send(message);
+        } else {
+            Notification.toast("Websocket not connected");
+        }
     }
 }

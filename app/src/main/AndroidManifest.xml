@@ -2,15 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="team_310.x_chair">
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Test"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/x_chair"
+        android:label="X-Chair"
+        android:roundIcon="@mipmap/x_chair"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="team_310.x_chair.mainactivity">
+        <activity android:name=".mainactivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

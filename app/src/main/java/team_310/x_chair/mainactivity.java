@@ -1,31 +1,39 @@
 package team_310.x_chair;
 
+import android.app.Activity;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
-////////////WEBSOCKET//////////////
-import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_17;
-import org.java_websocket.handshake.ServerHandshake;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-/////////////////////////////////////
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class mainactivity extends AppCompatActivity {
     //checks if the app is sending motion messages (button pressed)
     String sendingMotion = "0";
-    private WebSocketClient mWebSocketClient;
+    ////////SECRET SETTINGS////////////
+    private int egg = 0;
+    private int imState = 1;
+    RelativeLayout rl;
+    static TextView speedDisplay;
+    List sequence;
+    static MediaPlayer mp;
+
+    //context of application
+    static Activity act = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,29 +42,42 @@ public class mainactivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+        act = this;
+
+        rl = (RelativeLayout) findViewById(R.id.relativelayout);
 ///////////////////////////////////////////////////////////////////////
 ///////////////packet sending configuration////////////////////////////
 //////////////////////////////////////////////////////////////////////
-        final UDPSender sender = new UDPSender();
-        sender.host = "3.1.0.1";
-        sender.port = 9310;
-        sender.sendingInterval = 90; //interval at which moving commands will be sent repeatedly
-        final int controlRepeat = 4; //extra sending to be sure the message arrives
-
-        //final UDPReceiver receiver = new UDPReceiver();
-        //receiver.run(9310);          //Opening UDP listening port
-
         //Initialize WebSocket
         final WebSocket webSocket = new WebSocket();   //Creating a new webSocket
         webSocket.host = "3.1.0.1";    //Host to connect to
-        webSocket.port = 9310;
-        webSocket.sendingInterval = 90; //Interval at which the socket is going to resend
+        webSocket.port = 81;
+        webSocket.connected = false; //variable that checks if app is connected to websocket
         webSocket.connectWebSocket();   //connecting the websocket to arduino
 
-        //TODO: add webSocket.sendMessage(message) to all commands
-/////////////////////////////EXTRA WEBSOCKET////////////////////////////////////
+        System.out.println("check");
 
-        connectWebSocket();
+        /////SECRET SETTINGS//////////
+        //mainactivity.context = getApplicationContext();
+        speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
+        mp = MediaPlayer.create(this, R.raw.jinglebells);
+        sequence = new ArrayList();
+        sequence.add("r");
+        sequence.add("b");
+        sequence.add("g");
+        sequence.add("y");
+        sequence.add("rain");
+        sequence.add("y");
+        sequence.add("r");
+        /////////////////////////////
+
+
+///////////////////TEMP REPEATER/////////////
+        final Repeater repeater = new Repeater();
+        repeater.sendingInterval = 90;
+
+
 
 /////////////////////////////////////////////////////////////////////
 ////////////////////Color configuration//////////////////////////////
@@ -70,6 +91,7 @@ public class mainactivity extends AppCompatActivity {
         /*//0 for TV, 1 for DVD
         commands p = new commands();
         p.controller = 1;*/
+        //TODO: add reconnection function
 /////////////////////////////////////////////////////////////////////
 ///////////////////MOTION BUTTONS////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -83,21 +105,23 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "forward";
-                    /*//System.out.println("Button down");
-                    sender.running = true;
-                    UpButton.setTextColor(Color.BLACK);
-                    UpButton.setBackgroundColor(Color.parseColor(pressColor));
-                    sender.send(commands.FORWARD, true);
-*/                  webSocket.connectWebSocket();
-                    //sendMessage("Forward");
+                    System.out.println("Button FORWARD down");
+                    /*UpButton.setBackgroundColor(Color.parseColor(pressColor));
+                    UpButton.setShadowLayer(20, 20, 20, Color.BLACK);*/
+                    //webSocket.sendMessage(commands.FORWARD);    //uncomment for normal
+
+                    repeater.running = true;
+                    repeater.repeat(webSocket, commands.FORWARD);
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("forward")) {
-                    //System.out.println("button up");
+                    System.out.println("Button FORWARD up");
+                    webSocket.sendMessage(commands.BRAKE);
                     sendingMotion = "0";
-                    sender.running = false;
-                    UpButton.setTextColor(Color.BLACK);
-                    UpButton.setBackgroundColor(Color.parseColor(releaseColor));
+                    /*UpButton.setTextColor(Color.BLACK);
+                    UpButton.setBackgroundColor(Color.parseColor(releaseColor));*/
+
+                    repeater.running = false;
 
                     webSocket.running = false;
                     return true;
@@ -117,22 +141,25 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "down";
-                    sender.running = true;
-                    sender.send(commands.BACKWARD, true);
+                    System.out.println("Button BACKWARD down");
+                    //webSocket.sendMessage(commands.BACKWARD);   //uncomment for normal
                     DownButton.setTextColor(Color.BLACK);
-                    DownButton.setBackgroundColor(Color.parseColor(pressColor));
-                    DownButton.setShadowLayer(20, 20, 20, Color.BLACK);
+                    /*DownButton.setBackgroundColor(Color.parseColor(pressColor));
+                    DownButton.setShadowLayer(20, 20, 20, Color.BLACK);*/
 
-                    webSocket.running = true;
-                    webSocket.sendMessage(String.valueOf(commands.BACKWARD), true);
+                    repeater.running = true;
+                    repeater.repeat(webSocket, commands.BACKWARD);
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("down")) {
                     sendingMotion = "0";
-                    sender.running = false;
+                    System.out.println("Button FORWARD up");
+                    webSocket.sendMessage(commands.BRAKE);
                     DownButton.setTextColor(Color.BLACK);
-                    DownButton.setBackgroundColor(Color.parseColor(releaseColor));
-                    DownButton.setShadowLayer(0, 0, 0, Color.BLACK);
+                    /*DownButton.setBackgroundColor(Color.parseColor(releaseColor));
+                    DownButton.setShadowLayer(0, 0, 0, Color.BLACK);*/
+
+                    repeater.running = false;
                     return true;
                 }
 
@@ -149,20 +176,23 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "left";
-                    sender.running = true;
-                    sender.send(commands.LEFT, true);
-                    LeftButton.setTextColor(Color.BLACK);
-                    LeftButton.setBackgroundColor(Color.parseColor(pressColor));
+                    System.out.println("Button LEFT down");
+                    webSocket.sendMessage(commands.LEFT);
+                    /*LeftButton.setTextColor(Color.BLACK);
+                    LeftButton.setBackgroundColor(Color.parseColor(pressColor));*/
 
-                    /*webSocket.running = true;
-                    webSocket.sendMessage(String.valueOf(commands.LEFT), true);*/
+                    repeater.running = true;
+                    repeater.repeat(webSocket, commands.LEFT);
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("left")) {
                     sendingMotion = "0";
-                    sender.running = false;
-                    LeftButton.setTextColor(Color.BLACK);
-                    LeftButton.setBackgroundColor(Color.parseColor(releaseColor));
+                    System.out.println("Button LEFT up");
+                    webSocket.sendMessage(commands.BRAKE);
+                    /*LeftButton.setTextColor(Color.BLACK);
+                    LeftButton.setBackgroundColor(Color.parseColor(releaseColor));*/
+
+                    repeater.running = false;
                     return true;
                 }
 
@@ -179,20 +209,24 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "right";
-                    sender.running = true;
-                    sender.send(commands.RIGHT, true);
-                    RightButton.setTextColor(Color.BLACK);
-                    RightButton.setBackgroundColor(Color.parseColor(pressColor));
+                    System.out.println("Button RIGHT down");
+                    //webSocket.sendMessage(commands.RIGHT); //uncomment for normal
+                    /*RightButton.setTextColor(Color.BLACK);
+                    RightButton.setBackgroundColor(Color.parseColor(pressColor));*/
 
-                    //webSocket.running = true;
-                    //webSocket.sendMessage(String.valueOf(commands.RIGHT), true);
+                    repeater.running = true;
+                    repeater.repeat(webSocket, commands.RIGHT);
+
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("right")) {
                     sendingMotion = "0";
-                    sender.running = false;
-                    RightButton.setTextColor(Color.BLACK);
-                    RightButton.setBackgroundColor(Color.parseColor(releaseColor));
+                    System.out.println("Button RIGHT up");
+                    webSocket.sendMessage(commands.BRAKE);
+                    /*RightButton.setTextColor(Color.BLACK);
+                    RightButton.setBackgroundColor(Color.parseColor(releaseColor));*/
+
+                    repeater.running = false;
                     return true;
                 }
                 return false;
@@ -208,20 +242,15 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "su";
-                    sender.running = true;
-                    sender.send(commands.SPEEDUP, false);
-                    SuButton.setTextColor(Color.BLACK);
-                    SuButton.setBackgroundColor(Color.parseColor(pressColor));
-
-                    /*webSocket.running = true;
-                    webSocket.sendMessage(String.valueOf(commands.BACKWARD), true);*/
+                    webSocket.sendMessage(commands.SPEEDUP);
+                    /*SuButton.setTextColor(Color.BLACK);
+                    SuButton.setBackgroundColor(Color.parseColor(pressColor));*/
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("su")) {
                     sendingMotion = "0";
-                    sender.running = false;
-                    SuButton.setTextColor(Color.BLACK);
-                    SuButton.setBackgroundColor(Color.parseColor(releaseColor));
+                    /*SuButton.setTextColor(Color.BLACK);
+                    SuButton.setBackgroundColor(Color.parseColor(releaseColor));*/
                     return true;
                 }
                 return false;
@@ -237,17 +266,15 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "so";
-                    sender.running = true;
-                    sender.send(commands.SPEEDDOWN, false);
-                    SoButton.setTextColor(Color.BLACK);
-                    SoButton.setBackgroundColor(Color.parseColor(pressColor));
+                    webSocket.sendMessage(commands.SPEEDDOWN);
+                    /*SoButton.setTextColor(Color.BLACK);
+                    SoButton.setBackgroundColor(Color.parseColor(pressColor));*/
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("so")) {
                     sendingMotion = "0";
-                    sender.running = false;
-                    SoButton.setTextColor(Color.BLACK);
-                    SoButton.setBackgroundColor(Color.parseColor(releaseColor));
+                    /*SoButton.setTextColor(Color.BLACK);
+                    SoButton.setBackgroundColor(Color.parseColor(releaseColor));*/
                     return true;
                 }
                 return false;
@@ -266,13 +293,13 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "red";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_RED, false); // sending LIGHTS_RED data to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_RED);
+
+                    backgroundChanger("r");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("red")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -288,13 +315,12 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "green";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_GREEN, false); // sending green data to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_GREEN); // sending green data to address defined at beginning
+                    backgroundChanger("g");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("green")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -310,13 +336,12 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "yellow";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_YELLOW, false); // sending yellow to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_YELLOW); // sending yellow to address defined at beginning
+                    backgroundChanger("y");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("yellow")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -332,13 +357,12 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "blue";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_BLUE, false); // sending blue data to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_BLUE); // sending blue data to address defined at beginning
+                    backgroundChanger("b");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("blue")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -354,13 +378,12 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "rainbow";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_RAINBOW, false); // sending rainbow data to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_RAINBOW); // sending rainbow data to address defined at beginning
+                    backgroundChanger("rain");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("rainbow")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -376,15 +399,13 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "on";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_ON, false); // sending lights on data to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_ON); // sending lights on data to address defined at beginning
 
                     //sendMessage("0x61");
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("on")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -400,13 +421,11 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "off";
-                    sender.running = true;
-                    sender.send(commands.LIGHTS_OFF, false); // sending lights off to address defined at beginning
+                    webSocket.sendMessage(commands.LIGHTS_OFF); // sending lights off to address defined at beginning
                     return true;
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("off")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -422,15 +441,12 @@ public class mainactivity extends AppCompatActivity {
 
                 if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
                     sendingMotion = "lights_auto";
-                    /*sender.running = true;
-                    sender.send(commands.LIGHTS_AUTO, false); // sending lights auto to address defined at beginning*/
-                    connectWebSocket();
+                    webSocket.sendMessage(commands.LIGHTS_AUTO); // sending lights auto to address defined at beginning*/
                     return true;
 
 
                 } else if (action == MotionEvent.ACTION_UP && sendingMotion.equals("lights_auto")) {
                     sendingMotion = "0";
-                    sender.running = false;
                     return true;
                 }
                 return false;
@@ -446,13 +462,9 @@ public class mainactivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 System.out.println(isChecked);
                 if (isChecked) {
-                    for(int i=0; i < controlRepeat; i++) {
-                        sender.send(commands.CHG_STATION, false);
-                    }
+                    webSocket.sendMessage(commands.CHG_STATION);
                 } else {
-                    for(int i=0; i < controlRepeat; i++) {
-                        sender.send(commands.MANUAL, false);
-                    }
+                    webSocket.sendMessage(commands.LIGHTS_RED);
                 }
             }
         });
@@ -463,9 +475,12 @@ public class mainactivity extends AppCompatActivity {
 ///////-------------------------------View Speed-------------------------------------------////////
         //Transcoder trans = new Transcoder();
         //trans.transcode("123456");
-        /*final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
+       /* final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
         speedDisplay.setText("123");
+        for (int i = 0; i < 1000; i++) {
+            speedDisplay.setText(String.valueOf(i));
 
+        }
         final Thread t = new Thread(){
             public void run(){
                 try {
@@ -481,6 +496,24 @@ public class mainactivity extends AppCompatActivity {
             }
         };
         t.start();*/
+        ///////////////////------------------Connect----------------------------------////////////////
+        final Button connectButton = (Button) findViewById(R.id.connect);
+
+        connectButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                int action = event.getAction();
+
+                if (action == MotionEvent.ACTION_DOWN && sendingMotion.equals("0")) {
+                    webSocket.connectWebSocket();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+//////////////////////////////////////EASTER EGG///////////////////////////////////
+
 
 
 
@@ -489,50 +522,40 @@ public class mainactivity extends AppCompatActivity {
         final TextView speedDisplay = (TextView) findViewById(R.id.ViewSpeed);
         speedDisplay.setText("123454");
     }*/
-    private void connectWebSocket() {
-        URI uri;
-        try {
-            uri = new URI("ws://3.1.0.1:81/");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
+    void backgroundChanger(String code) {
+        Log.i("egg", "number " + egg+", code: " + code);
+        if (sequence.get(egg) == code) {
+            egg += 1;
+            //displayText(String.valueOf(egg));
+            Log.i("check", "code == egg "+ egg);
+
+            if (egg == 7) {
+                if (imState == 1) {
+                    rl.setBackgroundResource(R.drawable.background2);
+                    imState = 2;
+                    egg = 0;
+                    //displayText(String.valueOf(egg));
+                    mp.start();
+
+                } else{
+                    rl.setBackgroundResource(R.drawable.background);
+                    imState = 1;
+                    egg = 0;
+                    //displayText(String.valueOf(egg));
+                    mp.pause();
+                    mp.seekTo(0);
+                }
+
+            }
+        }else {
+            egg = 0;
+            //displayText(String.valueOf(egg));
         }
-        System.out.println("going to connect to: "+uri);
-
-        mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.i("Websocket", "Opened");
-                //mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
-                mWebSocketClient.send("request");
-            }
-
-            @Override
-            public void onMessage(String s) {
-                final String message = s;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Received message: "+ message);
-                    }
-                });
-            }
-
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.i("Websocket", "Closed " + s);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.i("Websocket", "Error " + e.getMessage());
-            }
-        };
-        mWebSocketClient.connect();
     }
-
-    public void sendMessage(String message) {
-        System.out.println("Sending message: "+ message);
-        mWebSocketClient.send(message);
+    public static void toast(String message) {
+        Toast.makeText(act, message, Toast.LENGTH_SHORT).show();
+    }
+    public static void displayText(String message){
+        speedDisplay.setText(message);
     }
 }
